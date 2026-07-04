@@ -34,11 +34,10 @@ Assume an adversary who sees **every block on every chain**, indefinitely, and r
 - **Cannot** forge proofs or seize shielded funds under the intended design.
 - **Can**, via the UUPS upgrade path, change contract logic. Mitigation: owner is a multisig, upgrades are observable on-chain, and this is a focus of the audit. Watch the upgrade key.
 
-## Known limitations (testnet)
+## Current design properties to understand
 
-- **Amounts are public.** Amount-matching is a live de-anonymization vector until encrypted-note amounts ship.
-- **Small anonymity sets.** On testnet, few deposits means weak privacy regardless of the cryptography.
-- **No completed audit or production ceremony.** See [Audits & trusted setup](/security/audits).
+- **Amounts are visible.** In the current design the withdrawn amount is a public value, so amount-matching is a de-anonymization vector. Encrypted-note amounts (below) close this — until then, prefer round, common amounts and split large ones.
+- **Privacy scales with the anonymity set.** Privacy is statistical: the more deposits between yours and your withdrawal, the stronger it is. A sparse pool offers weak privacy regardless of the cryptography.
 
 ## Roadmap items that strengthen the model
 

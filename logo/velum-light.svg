@@ -1,5 +1,13 @@
-<svg width="118" height="30" viewBox="0 0 118 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M4 8 L11 21 L18 8" stroke="#4f46e5" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <path d="M4 8 L18 8" stroke="#4f46e5" stroke-width="2.4" stroke-linecap="round" opacity="0.5"/>
-  <text x="27" y="21" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="600" fill="#1e1b2e">Velum</text>
+<svg width="150" height="34" viewBox="0 0 150 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="vl" x1="6" y1="6" x2="26" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#6366f1"/>
+      <stop offset="0.52" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <path d="M7 10 L16 27 L25 10" fill="none" stroke="url(#vl)" stroke-width="4.6" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="16" cy="12.5" r="2.3" fill="url(#vl)"/>
+  <text x="37" y="23" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="17" font-weight="700" letter-spacing="3.2" fill="#1e1b2e">VELUM</text>
+  <text x="128" y="15" font-family="Inter, ui-sans-serif, system-ui, sans-serif" font-size="8" font-weight="700" letter-spacing="0.5" fill="#4f46e5">zk</text>
 </svg>

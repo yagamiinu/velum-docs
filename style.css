@@ -1,0 +1,78 @@
+/* Velum docs — visual polish layered on the Mintlify Mint theme.
+   Kept intentionally light-touch so it degrades gracefully if Mintlify
+   changes internal class names. */
+
+:root {
+  --velum-grad: linear-gradient(100deg, #6366f1 0%, #7c3aed 52%, #0ea5e9 100%);
+}
+
+/* Gradient wash behind the hero on the landing page */
+.velum-hero {
+  position: relative;
+  border-radius: 20px;
+  padding: 3.25rem 2.25rem 2.75rem;
+  margin: 0 0 2.25rem;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 140% at 10% 0%, rgba(124, 58, 237, 0.18), transparent 60%),
+    radial-gradient(120% 140% at 90% 10%, rgba(14, 165, 233, 0.16), transparent 55%),
+    radial-gradient(90% 120% at 50% 100%, rgba(99, 102, 241, 0.14), transparent 60%);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+}
+
+.velum-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #7c3aed;
+  margin-bottom: 1rem;
+}
+
+.velum-hero__eyebrow::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #10b981;
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.18);
+}
+
+.velum-hero h1 {
+  font-size: clamp(2rem, 4.4vw, 3rem);
+  line-height: 1.05;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin: 0 0 0.9rem;
+}
+
+.velum-hero__grad {
+  background: var(--velum-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.velum-hero p {
+  font-size: 1.075rem;
+  line-height: 1.6;
+  max-width: 46ch;
+  opacity: 0.85;
+  margin: 0;
+}
+
+/* Card hover lift for the whole site */
+#content-area a[class*="card"]:hover,
+#content-area .card:hover {
+  transform: translateY(-2px);
+  transition: transform 0.18s ease, border-color 0.18s ease;
+}
+
+/* Slightly tighter, bolder section rules */
+#content-area h2 {
+  letter-spacing: -0.01em;
+}

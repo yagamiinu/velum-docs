@@ -38,7 +38,7 @@ Proofs are generated **client-side** with snarkjs and the compiled circuit artif
 
 ## Trusted setup
 
-Groth16 requires a per-circuit trusted setup (a "powers of tau" ceremony followed by a circuit-specific phase-2). A production trusted-setup ceremony is a **pre-mainnet milestone** — see [Audits & trusted setup](/security/audits). Until it is complete, testnet deployments use development parameters and must not be treated as secure for real value.
+Groth16 requires a per-circuit trusted setup (a "powers of tau" ceremony followed by a circuit-specific phase-2). Velum's proving and verifying keys come from a **multi-party ceremony** — secure as long as a single participant was honest and discarded their contribution — and the transcript is public. See [Security & audits](/security/audits) for details.
 
 ## Verifier
 

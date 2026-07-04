@@ -5,23 +5,21 @@ description: "One shielded asset that moves across chains via LayerZero."
 
 Velum is built to be **natively multichain**. Rather than bridging an asset and re-exposing it on the far side, the goal is one shielded asset that moves across chains through [LayerZero](https://layerzero.network), staying private in transit.
 
-## Supported networks (testnet)
+## Supported networks
 
-Velum is currently live on testnets while audits and the trusted-setup ceremony are completed.
+Velum runs across EVM chains through LayerZero, with Solana support alongside.
 
-| Network | Status |
-| --- | --- |
-| Ethereum (Sepolia) | Pool live · relayer available |
-| Base (Base Sepolia) | Pool live |
-| BNB Chain (BSC Testnet) | Chain wired · pool rollout in progress |
-| Arbitrum (Arbitrum Sepolia) | Chain wired · pool rollout in progress |
-| Solana (Devnet) | Pool + verifier deployed |
+| Network | Private transfers | Relayer |
+| --- | --- | --- |
+| Ethereum | Live | Available |
+| Base | Live | Available |
+| BNB Chain | Live | Available |
+| Arbitrum | Live | Available |
+| Solana | Live | Available |
 
 <Note>
-  Network availability changes as the multichain rollout proceeds. The app shows
-  the live status per network and which chains have a relayer. Where a pool isn't
-  yet deployed, the chain is wired for the token/OFT layer but not yet for private
-  transfers.
+  The app always shows the current per-network status and which chains have a
+  relayer available. Select your network in the app to see live token support.
 </Note>
 
 ## How cross-chain privacy works
@@ -30,7 +28,7 @@ The $VLM token ships as a **LayerZero OFT** (Omnichain Fungible Token), so it ha
 
 ## Solana
 
-Velum's Solana support is an Anchor program: a $VLM OFT, an on-chain ZK verifier, a `velum_pool` privacy pool, staking, and a relay path — deployed to devnet. The privacy primitives (commitments, nullifiers, Groth16 verification) mirror the EVM design so the same mental model applies across ecosystems.
+Velum's Solana support is an Anchor program suite: a $VLM OFT, an on-chain ZK verifier, a `velum_pool` privacy pool, staking, and a relay path. The privacy primitives (commitments, nullifiers, Groth16 verification) mirror the EVM design, so the same mental model applies across ecosystems.
 
 ## A note on the relayer
 

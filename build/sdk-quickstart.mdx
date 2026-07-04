@@ -87,4 +87,4 @@ await fetch(`${RELAYER_URL}/relay`, {
 - **Never transmit secrets.** `nullifier`, `secret`, and the Access Key stay on the user's device. Proving is client-side by design.
 - **Default to the relayer.** Label self-submit as the *public* option so users don't de-anonymize themselves by accident.
 - **Force a fresh recipient.** Don't default the withdrawal recipient to the connected wallet. See [The privacy model](/introduction/privacy-model).
-- **Respect the caveats.** Amounts are visible today; guide users accordingly.
+- **Respect the caveats.** Amounts are visible in the current design; guide users accordingly.

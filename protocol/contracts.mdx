@@ -49,12 +49,11 @@ event Unshield(bytes32 indexed nullifierHash, address indexed recipient, uint256
 
 ## Networks
 
-Velum is on testnets pending audit and trusted setup. Live networks and the deployed pool addresses are surfaced in-app and published at release. Current coverage: Ethereum Sepolia, Base Sepolia, BNB Chain (BSC Testnet), Arbitrum Sepolia, and Solana Devnet — see [Multichain](/using-velum/multichain) for per-network status.
+Velum runs on Ethereum, Base, BNB Chain, and Arbitrum via LayerZero, with Solana support alongside. The current pool addresses for each network are surfaced in-app and in the release manifest — see [Multichain](/using-velum/multichain).
 
 <Warning>
-  Addresses are intentionally not hard-coded here while testnet deployments are in
-  flux. Always resolve the current pool address from the official app or the
-  release manifest — never trust a pool address pasted from a third party.
+  Always resolve the current pool address from the official app or the release
+  manifest — never trust a pool address pasted from a third party.
 </Warning>
 
 ## Verifying a deployment
