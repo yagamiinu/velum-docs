@@ -1,0 +1,63 @@
+---
+title: "Contracts & addresses"
+description: "Deployed contracts, ABIs, and networks."
+---
+
+Velum's on-chain surface is small and public. Anyone can read it, verify it, and build on it.
+
+## Core contracts
+
+| Contract | Role |
+| --- | --- |
+| `VelumPool` | The privacy pool: shield, unshield, Merkle tree, nullifier tracking, fees. UUPS-upgradeable. |
+| `Groth16Verifier` | On-chain verifier for the unshield proof. |
+| `IncrementalMerkleTree` | Depth-20 Poseidon Merkle tree (inherited by the pool). |
+| `SanctionsOracle` | On-chain screening of depositor addresses. |
+| `VLM` (OFT) | Omnichain $VLM token (LayerZero OFT). |
+| `VLMStaking` | Staking + fee distribution for $VLM. |
+
+## Pool ABI (essentials)
+
+```solidity
+function shield(uint256 handle) payable;
+function shieldToken(address token, uint256 amount, uint256 handle);
+
+function unshield(
+  uint[2] pA, uint[2][2] pB, uint[2] pC,
+  uint256 root,
+  uint256 nullifierHash,
+  uint256 amount,
+  address payable recipient,
+  address relayer,
+  uint256 fee,
+  address token
+);
+
+function feeBps() view returns (uint256);
+function getLastRoot() view returns (uint256);
+function nullifierSpent(uint256) view returns (bool);
+
+event Shield(uint256 indexed commitment, uint32 leafIndex, uint256 amount, uint256 timestamp);
+event Unshield(bytes32 indexed nullifierHash, address indexed recipient, uint256 amount, uint256 fee, address relayer);
+```
+
+<Note>
+  When submitting a proof **directly** (not via the relayer), swap the `pB` (G2)
+  coordinates from snarkjs's native `[c1, c0]` order to the verifier's `[c0, c1]`
+  order. See [Circuits](/protocol/circuits) and [Integrate](/build/integrate).
+</Note>
+
+## Networks
+
+Velum is on testnets pending audit and trusted setup. Live networks and the deployed pool addresses are surfaced in-app and published at release. Current coverage: Ethereum Sepolia, Base Sepolia, BNB Chain (BSC Testnet), Arbitrum Sepolia, and Solana Devnet — see [Multichain](/using-velum/multichain) for per-network status.
+
+<Warning>
+  Addresses are intentionally not hard-coded here while testnet deployments are in
+  flux. Always resolve the current pool address from the official app or the
+  release manifest — never trust a pool address pasted from a third party.
+</Warning>
+
+## Verifying a deployment
+
+- The pool is a **UUPS proxy**; verify both the proxy and the current implementation.
+- The `Groth16Verifier` is fixed per circuit version — confirm it matches the published circuit artifacts before trusting a deployment with real value.

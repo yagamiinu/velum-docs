@@ -1,0 +1,71 @@
+---
+title: "What is Velum"
+description: "The invisible privacy layer for on-chain assets."
+---
+
+> *"Privacy is the power to selectively reveal oneself to the world."*
+> — Eric Hughes, *A Cypherpunk's Manifesto* (1993)
+
+## The most public money in history
+
+Money is going on-chain — not as an experiment anymore, but as infrastructure. Salaries, savings, settlements, company treasuries: the things people used to keep behind bank walls now live on open ledgers.
+
+But here's what the pitch decks leave out: **every one of those transactions is public. Forever.**
+
+- Anyone can pull up your wallet and read your entire net worth.
+- Every payment permanently links you to whoever you paid.
+- Businesses can't move a dollar without broadcasting payroll, runway, and strategy to competitors.
+- And none of it ever disappears — the chain doesn't forget. It *can't.*
+
+Without privacy, "on-chain everything" is just "exposed everything."
+
+## The analogy: on-chain value is in its plaintext era
+
+Think about the early internet. Every page you loaded, every password you typed, traveled in **plaintext** — anyone between you and the server could read it. The web worked, but you'd never do your banking on it.
+
+Then came TLS — HTTPS, the little lock in your browser. An invisible layer that encrypted everything in transit. Nobody signs up for HTTPS. It's just *there*, underneath the entire web. Encryption didn't become a product; it became the floor everything else stands on.
+
+**On-chain value is in the plaintext era right now.** Everything is readable. There is no lock icon for your wallet.
+
+What HTTPS did for the web, **Velum does for on-chain assets** — the invisible privacy layer that makes it safe to actually use.
+
+## What Velum is
+
+Velum is a **zero-knowledge privacy layer** for on-chain assets. It doesn't fight the openness of blockchains; it gives you a *choice* inside it. You shield an asset, move it, and the public link disappears while the proof that everything is valid stays on-chain.
+
+<CardGroup cols={2}>
+  <Card title="No mixer, no custody" icon="lock">
+    Just math. Funds are never pooled under an operator's control — the pool is a
+    public contract that only pays out against a valid proof.
+  </Card>
+  <Card title="Proofs in your browser" icon="browser">
+    Zero-knowledge proofs are generated locally. Your secrets never touch a
+    server — ours or anyone's.
+  </Card>
+  <Card title="Compliance built in" icon="shield-check">
+    Opt-in view keys and on-chain sanctions screening — privacy never has to
+    mean lawlessness.
+  </Card>
+  <Card title="Natively multichain" icon="link">
+    One shielded asset that moves across chains via LayerZero, instead of getting
+    bridged and re-exposed.
+  </Card>
+</CardGroup>
+
+## Who it's for
+
+**For a person**, your balance and your history are yours again — and you can still prove exactly what you need to (to an auditor, an accountant, a tax authority) by handing over a view key instead of your whole life.
+
+**For a business**, it's the difference between operating and broadcasting. Payroll, runway, and counterparties stop being public the moment you shield them — while opt-in screening and view keys keep you auditable.
+
+**For builders**, the circuit and verifier are deployed once and shared. A wallet, payroll app, or DeFi frontend adds private transfers without running a prover or holding a key — the way a site "adds HTTPS" by pointing at a certificate instead of reinventing TLS. See [Build on Velum](/build/sdk-quickstart).
+
+<Note>
+  Velum is **live on testnet today**. The audit and the trusted-setup ceremony
+  are pre-mainnet milestones — the parts we won't cut corners on, because a
+  privacy layer you can't trust is worse than none. See [Security](/security/audits).
+</Note>
+
+**Real privacy. Real assets. Real choice.**
+
+**Velum — step behind the veil. 🩶**

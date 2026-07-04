@@ -1,0 +1,46 @@
+---
+title: "Audits & trusted setup"
+description: "Where Velum is on the road to mainnet — honestly."
+---
+
+A privacy layer you can't trust is worse than none. So we'd rather tell you exactly where Velum stands than overclaim.
+
+## Current status
+
+<Note>
+  **Velum is live on testnet.** It has not completed a third-party security audit
+  or a production trusted-setup ceremony. Do not use it to protect real value
+  until both are done and published here.
+</Note>
+
+## Pre-mainnet milestones
+
+<Steps>
+  <Step title="Security audit">
+    Independent review of the pool contracts, the Groth16 verifier, the circuits,
+    and the relayer. Findings and remediations will be published.
+  </Step>
+  <Step title="Trusted-setup ceremony">
+    Groth16 requires a per-circuit trusted setup. A production ceremony with
+    multiple independent participants replaces the development parameters used on
+    testnet. As long as one participant is honest and discards their toxic waste,
+    the setup is secure. The transcript will be public.
+  </Step>
+  <Step title="Mainnet deployment">
+    Only after the above, with published addresses and a release manifest.
+  </Step>
+</Steps>
+
+## Why the trusted setup matters
+
+Groth16 is fast and cheap to verify on-chain — which is why Velum uses it — but its setup produces "toxic waste" that, if retained by an attacker, could let them forge proofs (and thus mint withdrawals). A multi-party ceremony reduces that risk to "at least one participant was honest." Until the production ceremony is complete, **testnet parameters must be treated as compromised by construction.**
+
+## Responsible disclosure
+
+Found something? Report it privately before disclosing publicly. Security contact details will be published alongside the audit. Do not test against real funds, and do not disclose a vulnerability in a way that puts users at risk.
+
+## What we won't cut corners on
+
+- No mainnet before audit **and** ceremony.
+- No custody, no master keys, no backdoors — verified in the audited code.
+- Public transcripts, public addresses, public verifier. If you can't verify it, don't trust it.

@@ -1,0 +1,46 @@
+---
+title: "Add funds (Shield)"
+description: "Move an asset into your private balance."
+---
+
+Shielding deposits an asset into the Velum pool and gives you back an **Access Key** — the secret you'll use later to move or cash out those funds privately.
+
+## Steps
+
+<Steps>
+  <Step title="Connect a wallet and pick a token">
+    Choose the network and token you want to shield (native ETH/BNB or any
+    supported ERC-20 — USDC, USDT, WETH, LINK). See [Multichain](/using-velum/multichain)
+    for the current network list.
+  </Step>
+  <Step title="Enter an amount and shield">
+    Your browser computes a commitment locally and the app submits a `shield`
+    (native) or `shieldToken` (ERC-20) transaction. **No zero-knowledge proof is
+    needed to deposit** — it's a single, cheap call.
+  </Step>
+  <Step title="Save your Access Key">
+    You receive an Access Key — a line of text containing the two secrets behind
+    your deposit. **This is the only way to spend your funds.** Save it now.
+  </Step>
+</Steps>
+
+<Warning>
+  Your Access Key is bearer-secret: anyone who has it can spend the funds, and if
+  you lose it, the funds are unrecoverable. There is no password reset — that's
+  the point of a non-custodial privacy pool. Save it in a password manager and
+  keep a backup.
+</Warning>
+
+## For ERC-20 tokens
+
+ERC-20 deposits require a one-time `approve` so the pool can pull the tokens, followed by the shield transaction. The app handles the allowance check for you; you may see two wallet prompts the first time you shield a given token.
+
+## What lands on-chain
+
+A single `Shield` event: the contract-built commitment (leaf hash), its index in the Merkle tree, the amount, and a timestamp. The event does **not** reveal your secrets — only the commitment, which is a one-way hash. See [Architecture](/protocol/architecture) for the leaf scheme.
+
+<Tip>
+  Shielding is only half of privacy. The link is broken when you **unshield to a
+  fresh address through the relayer** — not at deposit time. Read
+  [The privacy model](/introduction/privacy-model) before relying on it.
+</Tip>

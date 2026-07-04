@@ -1,0 +1,85 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "Velum",
+  "description": "The invisible privacy layer for on-chain assets. What HTTPS did for the web, Velum does for money on-chain.",
+  "colors": {
+    "primary": "#4f46e5",
+    "light": "#818cf8",
+    "dark": "#4338ca"
+  },
+  "favicon": "/logo/favicon.svg",
+  "logo": {
+    "light": "/logo/velum-light.svg",
+    "dark": "/logo/velum-dark.svg",
+    "href": "https://velum.finance"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Introduction",
+        "pages": [
+          "introduction/what-is-velum",
+          "introduction/how-it-works",
+          "introduction/privacy-model"
+        ]
+      },
+      {
+        "group": "Using Velum",
+        "pages": [
+          "using-velum/add-funds",
+          "using-velum/request-a-payment",
+          "using-velum/cash-out",
+          "using-velum/multichain"
+        ]
+      },
+      {
+        "group": "Protocol",
+        "pages": [
+          "protocol/architecture",
+          "protocol/circuits",
+          "protocol/relayer",
+          "protocol/compliance",
+          "protocol/contracts"
+        ]
+      },
+      {
+        "group": "Build on Velum",
+        "pages": [
+          "build/sdk-quickstart",
+          "build/integrate"
+        ]
+      },
+      {
+        "group": "Security",
+        "pages": [
+          "security/audits",
+          "security/threat-model"
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "App",
+        "href": "https://app.velum.finance"
+      },
+      {
+        "label": "GitHub",
+        "href": "https://github.com/velum"
+      }
+    ],
+    "primary": {
+      "type": "button",
+      "label": "Launch App",
+      "href": "https://app.velum.finance"
+    }
+  },
+  "footer": {
+    "socials": {
+      "x": "https://x.com/velum",
+      "github": "https://github.com/velum"
+    }
+  }
+}

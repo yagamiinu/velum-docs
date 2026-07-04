@@ -1,0 +1,43 @@
+---
+title: "Compliance"
+description: "Privacy that doesn't mean lawlessness — view keys and sanctions screening."
+---
+
+Velum is built on a simple conviction: **privacy and compliance are not opposites.** The goal is to make disclosure something you *grant*, not something the chain does to you by default. Compliance is built in, not bolted on.
+
+## Sanctions screening
+
+Screening happens at **both ends**, without anyone taking custody of funds:
+
+- **On deposit (on-chain).** Both shield paths screen the depositing address against a `SanctionsOracle` contract. A sanctioned address cannot deposit.
+- **On withdrawal (off-chain).** The [relayer](/protocol/relayer) screens the destination address against OFAC / sanctions lists before submitting the withdrawal.
+
+Because the pool is a public contract and the relayer is permissionless, this screening is a policy the honest infrastructure enforces — not a custodial chokepoint.
+
+## View keys — selective disclosure
+
+The core idea from the cypherpunk manifesto: *privacy is the power to selectively reveal oneself.* View keys make that concrete.
+
+Instead of exposing your entire on-chain history to everyone, forever, you can hand a **view key** to a specific party — an auditor, an accountant, a tax authority — that lets them verify exactly what you choose to show them. Disclosure becomes a deliberate act, scoped to one counterparty, rather than a default broadcast to the whole world.
+
+<Note>
+  For a business, this is the point: opt-in screening and view keys keep you
+  auditable, so your compliance team and your privacy team finally want the same
+  thing. Payroll and runway stop being public the moment you shield them, while
+  you retain the ability to prove what you must.
+</Note>
+
+## What this is not
+
+- **Not a backdoor.** No party can decrypt your activity without a view key you deliberately grant. Velum holds no master key.
+- **Not custody.** Funds are only ever moved by a valid proof against the public pool contract. Neither Velum nor the relayer can seize or freeze shielded funds.
+- **Not a license to evade.** Velum is not for use in jurisdictions where operating or using a privacy protocol is prohibited. See the Terms of Use and your local law.
+
+## Posture summary
+
+| Control | Where | Who enforces |
+| --- | --- | --- |
+| Sanctions screening (deposit) | On-chain | `SanctionsOracle` |
+| Sanctions screening (withdrawal) | Off-chain | Relayer |
+| Selective disclosure | Off-chain | You, via view keys |
+| Custody | — | Nobody (non-custodial) |

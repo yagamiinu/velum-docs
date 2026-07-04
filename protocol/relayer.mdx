@@ -1,0 +1,47 @@
+---
+title: "Relayer"
+description: "How withdrawals reach the chain without exposing your wallet."
+---
+
+The relayer is what makes a **private** withdrawal possible. Without it, you would have to submit the `unshield` transaction from your own wallet — and `msg.sender` would link the withdrawal straight back to you.
+
+## What it does
+
+<Steps>
+  <Step title="Receives your proof">
+    Your browser generates the zero-knowledge proof and POSTs it to the relayer
+    with the public inputs (root, nullifier hash, amount, recipient, fee, token).
+  </Step>
+  <Step title="Screens the destination">
+    The relayer screens the recipient address off-chain against sanctions / OFAC
+    lists before submitting. On-chain screening already covered the depositor; the
+    relayer covers the destination.
+  </Step>
+  <Step title="Submits the transaction">
+    The relayer sends the `unshield` transaction, becoming `msg.sender`. It pays
+    the gas and collects its fee from the withdrawn amount. Your wallet never
+    appears.
+  </Step>
+</Steps>
+
+## Why it can't cheat
+
+The `recipient`, `relayer`, and `fee` are **public inputs bound into the zero-knowledge proof**. If the relayer tried to change the recipient, the amount, or take a larger fee, the proof would no longer verify and the transaction would revert. The relayer is a dumb pipe — it can submit your withdrawal or refuse, but it cannot alter or steal it.
+
+<Info>
+  The relayer never sees your secrets. It only ever handles a finished proof and
+  its public inputs. It cannot spend your notes, cannot link your deposit, and
+  cannot reconstruct your Access Key.
+</Info>
+
+## Fees
+
+The relayer collects a fee (bounded by the proof's `fee` input) to cover the gas it fronts. This is separate from the protocol fee. When you self-submit instead, there's no relayer fee — but you sacrifice the privacy the relayer provides.
+
+## Availability
+
+The relayer runs per-network. The reference frontend enables it by default where available and falls back to self-submit (with a clear warning) where it isn't. A Solana relay path exists alongside the EVM one. Anyone can run a relayer against the public pool contract — it holds no special privilege.
+
+## Screening and compliance
+
+The relayer is also the enforcement point for **destination screening**. Combined with the on-chain sanctions oracle on deposit, this gives Velum screening at both ends without any party holding custody of funds. See [Compliance](/protocol/compliance).

@@ -1,0 +1,66 @@
+---
+title: "The privacy model"
+description: "What Velum hides, what it doesn't, and how to not de-anonymize yourself."
+---
+
+Privacy is statistical, not magical. The zero-knowledge proof breaks the link between a deposit and a withdrawal — but *how you use the protocol* can hand that link right back. Read this page before you rely on Velum for anything that matters.
+
+<Warning>
+  Cryptography protects the link between deposit and withdrawal. It does **not**
+  protect you from reconnecting that link yourself through the recipient address,
+  the withdrawing wallet, the amount, or the timing.
+</Warning>
+
+## What Velum hides
+
+- **Which deposit a withdrawal came from.** The proof reveals only that *some* valid note in the tree is being spent, never which one.
+- **The link between your deposit wallet and your recipient wallet** — provided you follow the rules below.
+
+## What Velum does *not* hide
+
+- **The recipient address.** Funds leaving the pool land in a public address; that balance change is always visible. This is true of every privacy pool (Tornado, Railgun, Privacy Cash). Privacy comes from *unlinkability*, not from hiding the destination.
+- **The amount** — in the current testnet design, the withdrawn amount is a public value. Amount-matching a deposit to a withdrawal is therefore possible. Hiding amounts (encrypted-note UTXOs) is on the roadmap; until then, treat amounts as visible.
+- **The mere fact that you used Velum.** Interacting with the pool is public.
+
+## How to preserve your privacy
+
+<Steps>
+  <Step title="Always withdraw through the relayer">
+    If you self-submit, your own wallet signs and pays gas for the withdrawal —
+    an instant link. Use the relayer so the transaction comes from someone else.
+  </Step>
+  <Step title="Withdraw to a fresh, unfunded address">
+    Never cash out to the wallet you deposited from, or to any address funded by
+    it. Use a brand-new address with no prior on-chain history connecting it to you.
+  </Step>
+  <Step title="Let the anonymity set grow">
+    Withdrawing seconds after depositing, when yours is the only recent deposit,
+    makes correlation trivial regardless of the math. Wait. The larger the set of
+    deposits between yours and your withdrawal, the stronger your privacy.
+  </Step>
+  <Step title="Mind the amount">
+    An unusual, exact amount (e.g. 3.14159 ETH) links a deposit to a withdrawal by
+    itself. Prefer round numbers and common sizes; split large amounts.
+  </Step>
+</Steps>
+
+## Common ways people de-anonymize themselves
+
+| Mistake | Why it leaks | Fix |
+| --- | --- | --- |
+| Cash out to the deposit wallet | Deposit and withdrawal share an owner on-chain | Use a fresh recipient |
+| Self-submit the withdrawal | `msg.sender` is your wallet | Use the relayer |
+| Deposit and withdraw the same rare amount | Amount-matching links the two | Round amounts; split |
+| Withdraw immediately after depositing | Timing correlation | Wait for the set to grow |
+| Fund the "fresh" recipient from your main wallet | The funding tx re-links them | Fund from an unrelated source |
+
+<Note>
+  Velum's defaults nudge you toward the safe path — the relayer is on by default,
+  and the app warns when a recipient looks linked to a deposit. But the final
+  responsibility is yours. When in doubt, assume an adversary is watching every
+  block, because they are.
+</Note>
+
+## Compliance is not the same as surveillance
+
+Preserving privacy from the public does not mean evading legitimate oversight. Velum supports **opt-in view keys** — you can grant an auditor, accountant, or tax authority the ability to verify exactly what you choose, without exposing your entire history to everyone. Deposits are screened against sanctions lists on-chain. See [Compliance](/protocol/compliance).

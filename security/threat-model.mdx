@@ -1,0 +1,48 @@
+---
+title: "Threat model"
+description: "What Velum defends against, what it assumes, and where the edges are."
+---
+
+Security is only meaningful relative to an adversary. This page states who Velum defends you against, what it assumes, and where the limits are.
+
+## Adversary: a global chain observer
+
+Assume an adversary who sees **every block on every chain**, indefinitely, and runs the best available de-anonymization tooling. This is the realistic adversary for public ledgers.
+
+**Velum defends against** this observer linking your deposit to your withdrawal — *provided* you use a relayer, a fresh recipient, and a healthy anonymity set. The zero-knowledge proof reveals only that some valid note was spent.
+
+**Velum does not defend against** you re-establishing the link yourself: reusing wallets, funding a "fresh" address from your main one, withdrawing a rare exact amount, or withdrawing seconds after depositing. See [The privacy model](/introduction/privacy-model).
+
+## Trust assumptions
+
+| Component | Assumption |
+| --- | --- |
+| Circuit + verifier | Sound Groth16 setup (post-ceremony). Toxic waste discarded. |
+| Merkle tree / pool | Correct contract, verified on-chain, UUPS owner = honest multisig. |
+| Relayer | Untrusted for integrity (can't alter your withdrawal — it's bound in the proof), semi-trusted for liveness (can refuse to submit). |
+| Sanctions oracle | Maintained against current lists; a stale oracle weakens screening, not fund safety. |
+| Your device | Trusted. Secrets are generated and proofs computed locally; a compromised device compromises your notes. |
+
+## What a malicious relayer can and cannot do
+
+- **Cannot** change the recipient, amount, or fee — these are public inputs bound into the proof.
+- **Cannot** learn your secrets or link your deposit — it only sees a finished proof.
+- **Can** refuse to submit (denial of service). Mitigation: multiple independent relayers, or self-submit as a fallback.
+
+## What a malicious pool owner can and cannot do
+
+- **Cannot** forge proofs or seize shielded funds under the intended design.
+- **Can**, via the UUPS upgrade path, change contract logic. Mitigation: owner is a multisig, upgrades are observable on-chain, and this is a focus of the audit. Watch the upgrade key.
+
+## Known limitations (testnet)
+
+- **Amounts are public.** Amount-matching is a live de-anonymization vector until encrypted-note amounts ship.
+- **Small anonymity sets.** On testnet, few deposits means weak privacy regardless of the cryptography.
+- **No completed audit or production ceremony.** See [Audits & trusted setup](/security/audits).
+
+## Roadmap items that strengthen the model
+
+- **Encrypted-note amounts** (hide the withdrawn amount).
+- **Persistent shielded balances + shield→shield transfers** (keep value private end-to-end instead of exiting to a public address).
+- **Deterministic key derivation** (remove the "save your Access Key or lose funds" failure mode).
+- **Growing, cross-chain anonymity sets** via the omnichain design.

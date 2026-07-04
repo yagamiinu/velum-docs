@@ -1,0 +1,37 @@
+---
+title: "Multichain"
+description: "One shielded asset that moves across chains via LayerZero."
+---
+
+Velum is built to be **natively multichain**. Rather than bridging an asset and re-exposing it on the far side, the goal is one shielded asset that moves across chains through [LayerZero](https://layerzero.network), staying private in transit.
+
+## Supported networks (testnet)
+
+Velum is currently live on testnets while audits and the trusted-setup ceremony are completed.
+
+| Network | Status |
+| --- | --- |
+| Ethereum (Sepolia) | Pool live · relayer available |
+| Base (Base Sepolia) | Pool live |
+| BNB Chain (BSC Testnet) | Chain wired · pool rollout in progress |
+| Arbitrum (Arbitrum Sepolia) | Chain wired · pool rollout in progress |
+| Solana (Devnet) | Pool + verifier deployed |
+
+<Note>
+  Network availability changes as the multichain rollout proceeds. The app shows
+  the live status per network and which chains have a relayer. Where a pool isn't
+  yet deployed, the chain is wired for the token/OFT layer but not yet for private
+  transfers.
+</Note>
+
+## How cross-chain privacy works
+
+The $VLM token ships as a **LayerZero OFT** (Omnichain Fungible Token), so it has one canonical supply that moves across chains without a wrapped-and-re-exposed representation on each one. The privacy pool follows the same philosophy: shielded value is meant to move omnichain instead of being bridged and de-anonymized at each hop.
+
+## Solana
+
+Velum's Solana support is an Anchor program: a $VLM OFT, an on-chain ZK verifier, a `velum_pool` privacy pool, staking, and a relay path — deployed to devnet. The privacy primitives (commitments, nullifiers, Groth16 verification) mirror the EVM design so the same mental model applies across ecosystems.
+
+## A note on the relayer
+
+Privacy on withdrawal depends on the [relayer](/protocol/relayer), which runs per-chain. If you shield on a chain without a relayer, you can still self-submit — but for a private cash-out, withdraw on a chain where the relayer is available.

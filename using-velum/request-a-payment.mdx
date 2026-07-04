@@ -1,0 +1,47 @@
+---
+title: "Request a payment"
+description: "Get paid privately — funds arrive already shielded."
+---
+
+A payment request is Velum's version of "send me money" — except the funds arrive **already private**, with no account and no server in the path.
+
+## How it works
+
+A request is simply **your commitment in a link**. When someone opens it and pays, they deposit directly to that commitment, so the incoming funds are shielded the moment they land. You hold the Access Key behind the commitment, so only you can later move or cash out.
+
+<Steps>
+  <Step title="Generate a request">
+    Pick the token and amount you want to receive. Velum computes a fresh
+    commitment and its Access Key in your browser, and packs the commitment into a
+    shareable link.
+  </Step>
+  <Step title="Save the Access Key">
+    As with shielding, the Access Key is the only way to spend what you receive.
+    Save it before sharing the link.
+  </Step>
+  <Step title="Share the link">
+    Send the link to the payer. When they pay, their wallet deposits to your
+    commitment — the funds arrive shielded.
+  </Step>
+  <Step title="Cash out or keep it private">
+    Once paid, use [Cash out](/using-velum/cash-out) to withdraw to any wallet, or
+    hold the balance privately.
+  </Step>
+</Steps>
+
+## Why this matters
+
+This is what makes Velum a **payments** layer, not just a mixer. The payer doesn't need a Velum account. You don't reveal a public wallet to get paid. The link between payer and payee is never written to the chain — the request *is* the shielded transfer.
+
+<Info>
+  Under the hood, a paid request and a direct shield produce the same kind of
+  note — a leaf in the Merkle tree keyed by a commitment. That's why the same
+  Access Key mechanism, and the same [privacy rules](/introduction/privacy-model),
+  apply to both.
+</Info>
+
+## Good hygiene
+
+- Generate a **new request** (new commitment) per payer where possible, so paid requests aren't grouped by a shared commitment.
+- Treat the amount as visible today — see [The privacy model](/introduction/privacy-model).
+- Cash out to a **fresh address through the relayer**, as always.

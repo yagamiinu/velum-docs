@@ -1,0 +1,61 @@
+---
+title: "How it works"
+description: "Shield, move, and unshield — in plain English, then in detail."
+---
+
+Velum has three actions. Everything else is built on them.
+
+<Steps>
+  <Step title="Shield — make an asset private">
+    You deposit an asset (ETH, a stablecoin, any supported token) into the Velum
+    pool. In the same transaction you hand the pool a single **commitment** — a
+    hash computed in your browser from two secrets only you know. The asset goes
+    in; the public link to you is severed. You keep an **Access Key** that lets
+    you spend it later.
+  </Step>
+  <Step title="Move — send or request privately">
+    A payment request is just your commitment in a link. Whoever opens it deposits
+    to *that* commitment, so the funds arrive **already shielded** — no account,
+    and no Velum server ever sits in the path.
+  </Step>
+  <Step title="Unshield — cash out to any wallet">
+    To withdraw, your browser builds a **zero-knowledge proof** that your
+    commitment is one of the deposits in the pool — without revealing *which* one.
+    The pool checks the proof and pays out to any address you choose. The link
+    between where the money came from and where it went is broken.
+  </Step>
+</Steps>
+
+## The mechanism, one level deeper
+
+Every deposit becomes a leaf in an on-chain **Merkle tree**. The leaf is a hash:
+
+```
+handle = Poseidon(nullifier, secret)          // computed in your browser
+leaf   = Poseidon(amount, token, handle)      // built by the contract
+```
+
+The two secrets — `nullifier` and `secret` — are yours alone and live only in your Access Key. The contract builds the leaf itself from the *real* amount and token, so a deposit can never lie about what it put in.
+
+When you withdraw, you prove in zero knowledge that:
+
+1. You know the `nullifier` and `secret` behind **some** leaf in the tree, and
+2. That leaf commits to the amount and token you're withdrawing.
+
+The proof reveals a **nullifier hash** — a one-way fingerprint that marks the note as spent so it can't be withdrawn twice — but it never reveals *which* leaf you spent. To an observer, the withdrawal could have come from any deposit in the tree. That set of indistinguishable deposits is your **anonymity set**.
+
+<Info>
+  No proof is required to **shield** — depositing is a single, cheap call. The
+  zero-knowledge proof is only needed to **unshield**, and it's generated
+  entirely in your browser (~30s). Your secrets never leave your device.
+</Info>
+
+## What breaks the link — and what doesn't
+
+The magic is the *unlinkability* between deposit and withdrawal. But privacy is a system, not a single trick. Three things have to hold:
+
+- **A relayer submits your withdrawal**, so your own wallet doesn't sign it. See [Cash out](/using-velum/cash-out).
+- **The recipient is a fresh address** with no prior link to your deposit wallet.
+- **The anonymity set is large enough** that "which deposit?" is genuinely unanswerable.
+
+Get any of these wrong and the cryptography can't save you. We spell out exactly how in [The privacy model](/introduction/privacy-model) — read it before you rely on Velum for anything real.

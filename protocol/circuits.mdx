@@ -1,0 +1,45 @@
+---
+title: "Circuits & proofs"
+description: "The Groth16 zero-knowledge circuit behind unshielding."
+---
+
+Velum's privacy rests on a **zero-knowledge proof** that a note exists in the pool without revealing which one. The circuits are written in [Circom](https://docs.circom.io) and proven with **Groth16**.
+
+## What the proof asserts
+
+When you unshield, your browser proves — in zero knowledge — that:
+
+1. You know the `nullifier` and `secret` behind some leaf `Poseidon(amount, token, Poseidon(nullifier, secret))`.
+2. That leaf is a member of the Merkle tree with the given `root` (via a Merkle inclusion proof).
+3. The revealed `nullifierHash` correctly corresponds to that note's `nullifier`.
+4. The `amount` and `token` being withdrawn match the ones committed in the leaf.
+
+The proof reveals the **public inputs** — `root`, `nullifierHash`, `amount`, `recipient`, `relayer`, `fee`, `token` — and nothing else. In particular, it never reveals *which* leaf you spent or the secrets behind it.
+
+## Circuit structure
+
+| Circuit | Role |
+| --- | --- |
+| `merkle.circom` | Verifies a Merkle inclusion path (depth 20) using Poseidon. |
+| `unshield.circom` | Top-level circuit: recomputes the leaf, checks inclusion, derives the nullifier hash, and binds the public withdrawal parameters. |
+
+Binding `recipient`, `relayer`, and `fee` as public inputs means a relayer **cannot alter them** — it can only submit the exact withdrawal you signed off on. This is what makes it safe to hand your proof to a third party.
+
+## Proving in the browser
+
+Proofs are generated **client-side** with snarkjs and the compiled circuit artifacts. Your secrets never leave your device — not to Velum, not to the relayer. Proving takes roughly 30 seconds on a typical laptop.
+
+<Note>
+  snarkjs emits the `pB` (G2) coordinates in `[c1, c0]` order, while the on-chain
+  verifier expects `[c0, c1]`. Integrations that submit proofs directly must swap
+  these coordinates. The relayer performs this swap server-side; the reference
+  frontend swaps it for the self-submit path. See [Integrate](/build/integrate).
+</Note>
+
+## Trusted setup
+
+Groth16 requires a per-circuit trusted setup (a "powers of tau" ceremony followed by a circuit-specific phase-2). A production trusted-setup ceremony is a **pre-mainnet milestone** — see [Audits & trusted setup](/security/audits). Until it is complete, testnet deployments use development parameters and must not be treated as secure for real value.
+
+## Verifier
+
+The compiled Groth16 verifier is deployed on-chain (`Groth16Verifier`) and called by the pool during `unshield`. On Solana, an equivalent on-chain `zk_verifier` program performs the same check. The verifier is fixed at deploy time; changing the circuit means deploying a new verifier.

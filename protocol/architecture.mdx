@@ -1,0 +1,64 @@
+---
+title: "Architecture"
+description: "Commitments, the Merkle tree, nullifiers, and the shield/unshield lifecycle."
+---
+
+Velum is a **commitment-based privacy pool**. Deposits become leaves in an on-chain Merkle tree; withdrawals prove membership in that tree in zero knowledge. This page describes the on-chain design.
+
+## The leaf scheme
+
+Every deposit is committed as a single leaf, built from two Poseidon hashes:
+
+```
+handle = Poseidon(nullifier, secret)          // computed in the browser
+leaf   = Poseidon(amount, token, handle)      // built by the contract
+```
+
+- `nullifier` and `secret` are random values the depositor generates locally. They are the entire content of the **Access Key** and never touch the chain in the clear.
+- `handle` is the depositor-supplied commitment to those secrets.
+- The **contract** builds the final leaf from the *real* `amount` and `token` it received, so a deposit can never misrepresent what it put in. `token = address(0)` denotes native ETH/BNB.
+
+Using [Poseidon](https://www.poseidon-hash.info/) — a hash designed for zero-knowledge circuits — keeps proving cheap enough to run in a browser.
+
+## The Merkle tree
+
+Deposits are inserted into an **incremental Merkle tree** of depth **20**, giving room for **1,048,576** leaves (`2^20`). The contract tracks filled subtrees and a rolling history of recent roots, so a withdrawal can prove membership against a root that was valid when the proof was built, even as the tree keeps growing.
+
+## Lifecycle
+
+<Steps>
+  <Step title="Shield (deposit) — no proof">
+    `shield(handle)` (native, `payable`) or `shieldToken(token, amount, handle)`
+    (ERC-20). The contract screens the depositor against sanctions, builds the leaf
+    from real values, inserts it, and emits a `Shield` event with the commitment
+    and its leaf index. No zero-knowledge proof is required to deposit.
+  </Step>
+  <Step title="Unshield (withdraw) — Groth16 proof">
+    The user submits a Groth16 proof plus public inputs: `root`, `nullifierHash`,
+    `amount`, `recipient`, `relayer`, `fee`, and `token`. The contract verifies the
+    proof against the on-chain verifier, checks the root is known and the nullifier
+    unspent, marks the nullifier spent, and pays out.
+  </Step>
+</Steps>
+
+## Nullifiers and double-spend protection
+
+A withdrawal reveals a **nullifier hash** — a one-way fingerprint derived from the note's secrets. The contract stores spent nullifier hashes in a mapping; a second withdrawal of the same note produces the same nullifier hash and is rejected. The nullifier hash cannot be linked back to the deposit commitment, so it marks the note spent without revealing which leaf it was.
+
+## Fees and payout
+
+The protocol fee (`feeBps`, basis points, capped at 10%) is deducted from the withdrawn amount and paid to `msg.sender` (the relayer), in the same asset as the deposit. For native ETH, the relayer forwards its fee to staking; for ERC-20, the fee stays with the relayer. The remaining payout goes to the recipient.
+
+## Contract design
+
+| Property | Choice |
+| --- | --- |
+| Hash | Poseidon (`PoseidonT4` for the 3-input leaf) |
+| Proof system | Groth16 |
+| Tree | Incremental Merkle, depth 20, rolling root history |
+| Assets | Native ETH/BNB + ERC-20 |
+| Upgradeability | UUPS proxy, owner = dev multisig |
+| Reentrancy | Guarded on payout paths |
+| Compliance | On-chain sanctions oracle at both deposit paths |
+
+See [Circuits](/protocol/circuits) for the proof, [Compliance](/protocol/compliance) for screening and view keys, and [Contracts](/protocol/contracts) for addresses and ABIs.

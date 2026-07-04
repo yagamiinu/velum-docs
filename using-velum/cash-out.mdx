@@ -1,0 +1,66 @@
+---
+title: "Cash out (Unshield)"
+description: "Withdraw your private balance to any wallet."
+---
+
+Unshielding withdraws funds from your private balance to any address, proving your note is valid **without revealing which deposit it came from**.
+
+## Steps
+
+<Steps>
+  <Step title="Paste your Access Key">
+    The secret you saved when you shielded or generated a request. Velum uses it to
+    find your note in the pool and build the proof.
+  </Step>
+  <Step title="Choose a recipient">
+    Enter the destination address. **Use a fresh address that has no link to your
+    deposit wallet** — this is the single most important step for staying private.
+  </Step>
+  <Step title="Keep the relayer on">
+    With the relayer enabled (default), a third party submits the withdrawal, so
+    your wallet never signs or pays gas for it — nothing links the cash-out back
+    to you. It charges a small fee.
+  </Step>
+  <Step title="Generate proof and submit">
+    Your browser builds a zero-knowledge proof (~30s), then hands it to the relayer
+    (or submits it yourself). The pool verifies it and pays out.
+  </Step>
+</Steps>
+
+## Relayer vs. self-submit
+
+<CardGroup cols={2}>
+  <Card title="Relayer (recommended)" icon="user-secret">
+    A third party submits the transaction. Your wallet never appears on-chain.
+    Costs a small relayer fee on top of the protocol fee. **This preserves your
+    anonymity.**
+  </Card>
+  <Card title="Self-submit" icon="wallet">
+    You send the transaction yourself. Cheaper (no relayer fee), but **your wallet
+    is written on-chain as the sender** — which links the withdrawal to you. Only
+    use this when you don't need privacy.
+  </Card>
+</CardGroup>
+
+<Warning>
+  The recipient field defaults to your connected wallet for convenience. Do **not**
+  accept that default if you care about privacy — cashing out to your deposit
+  wallet reconnects everything. Always paste a fresh, unlinked address.
+</Warning>
+
+## Fees
+
+- **Protocol fee** — a percentage (`feeBps`, capped at 10%) deducted from the withdrawn amount.
+- **Relayer fee** — charged only when you withdraw via the relayer, to cover the gas it pays on your behalf.
+
+Self-submit incurs no relayer fee (you pay your own gas), but sacrifices privacy.
+
+## What lands on-chain
+
+An `Unshield` event: the nullifier hash (marks the note spent, prevents double-withdrawal), the recipient, the amount, the fee, and the relayer address. Critically, it does **not** reveal which deposit funded the withdrawal.
+
+<Tip>
+  Availability of the relayer depends on the network. If it isn't available on
+  your chain, the app falls back to self-submit and tells you so — in that case,
+  consider bridging to a chain where the relayer runs before cashing out.
+</Tip>
