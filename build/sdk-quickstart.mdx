@@ -1,0 +1,90 @@
+---
+title: "SDK quickstart"
+description: "Add private transfers the way you add HTTPS."
+---
+
+Velum is not a walled garden — it's a **public contract anyone can build on**. The circuit and verifier are deployed once and shared, so a wallet, payroll app, or DeFi frontend can add private transfers without running a prover or holding a key.
+
+That's the whole pitch: you add privacy by pointing at Velum, the way a site "adds HTTPS" by pointing at a certificate instead of reinventing TLS.
+
+<Info>
+  The examples below describe the integration shape against the public pool. The
+  packaged SDK is evolving alongside the multichain rollout; until it's published,
+  you can integrate directly against the [contract ABI](/protocol/contracts) using
+  the same three calls the reference frontend uses.
+</Info>
+
+## The three operations
+
+<CardGroup cols={3}>
+  <Card title="Shield" icon="download">
+    Compute a commitment locally, call `shield` / `shieldToken`. Hand the user
+    their Access Key.
+  </Card>
+  <Card title="Prove" icon="microchip">
+    Rebuild the Merkle tree from `Shield` events, generate the Groth16 proof in the
+    browser.
+  </Card>
+  <Card title="Unshield" icon="upload">
+    Submit the proof to the relayer (private) or on-chain (self-submit).
+  </Card>
+</CardGroup>
+
+## Shield
+
+```js
+import { computeHandle } from "@velum/sdk"; // or the reference proof helpers
+
+// Generate secrets locally — this is the user's Access Key.
+const nullifier = randomField();
+const secret    = randomField();
+const handle    = await computeHandle(nullifier, secret);
+
+// Native asset:
+await pool.write.shield([handle], { value: amount });
+
+// ERC-20 (after approve):
+await pool.write.shieldToken([token, amount, handle]);
+
+// Persist { nullifier, secret, amount, token } as the Access Key. This is the
+// only way to spend the deposit — never send it to a server.
+```
+
+## Prove and unshield
+
+```js
+// 1. Fetch all Shield events and rebuild the Merkle tree.
+const events = await fetchShieldEvents(pool);
+const tree   = await rebuildTree(events);
+
+// 2. Generate the proof in the browser (~30s).
+const proof = await generateProof(note, tree, recipient, relayerAddr, feeWei);
+
+// 3a. Private path — hand it to the relayer:
+await fetch(`${RELAYER_URL}/relay`, {
+  method: "POST",
+  body: JSON.stringify({
+    pA: proof.pA, pB: proof.pB, pC: proof.pC,
+    root: proof.root.toString(),
+    nullifierHash: proof.nullifierHash.toString(),
+    amount: note.amount.toString(),
+    recipient, fee: feeWei, token,
+  }),
+});
+
+// 3b. Self-submit path — swap pB G2 coords to on-chain order first (see below).
+```
+
+<Warning>
+  **G2 coordinate order.** snarkjs emits `pB` as `[c1, c0]`; the on-chain verifier
+  expects `[c0, c1]`. For self-submit, swap them:
+  `pB = [[pB[0][1], pB[0][0]], [pB[1][1], pB[1][0]]]`. The relayer does this for
+  you server-side.
+</Warning>
+
+## Design principles for integrators
+
+- **Never transmit secrets.** `nullifier`, `secret`, and the Access Key stay on the user's device. Proving is client-side by design.
+- **Default to the relayer.** Label self-submit as the *public* option so users don't de-anonymize themselves by accident.
+- **Force a fresh recipient.** Don't default the withdrawal recipient to the connected wallet. See [The privacy model](/introduction/privacy-model).
+- **Respect the caveats.** Amounts are visible today; guide users accordingly.

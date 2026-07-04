@@ -1,0 +1,77 @@
+---
+title: "Integrate private transfers"
+description: "Patterns for wallets, payment apps, and DeFi frontends."
+---
+
+This page covers the integration patterns beyond the three core calls in the [SDK quickstart](/build/sdk-quickstart).
+
+## Rebuilding the tree from events
+
+The pool doesn't store notes for you — privacy requires that it can't. To spend a note, you reconstruct the Merkle tree client-side from the public `Shield` events:
+
+```js
+// Each Shield event carries { commitment, leafIndex }.
+// Fetch from the pool's deploy block to head, then sort by leafIndex.
+const events = await getLogs(pool, "Shield", deployBlock, head);
+events.sort((a, b) => a.leafIndex - b.leafIndex);
+const tree = await rebuildTree(events);
+```
+
+<Tip>
+  Many RPC providers cap `getLogs` block ranges (e.g. 10 blocks on some free
+  tiers). Page the range and fetch pages concurrently. The reference frontend
+  uses 9-block pages, 50 pages in parallel — tune to your provider's limits.
+</Tip>
+
+## Finding a user's note
+
+A note is identified by recomputing its leaf from the user's secrets and matching it against the fetched commitments:
+
+```js
+const handle       = await computeHandle(note.nullifier, note.secret);
+const expectedLeaf = await computeLeaf(note.amount, note.token, handle);
+const match        = events.find((e) => e.commitment === expectedLeaf);
+note.leafIndex     = match.leafIndex; // needed to build the Merkle path
+```
+
+If there's no match, the deposit hasn't landed yet (or you're on the wrong network) — surface that clearly rather than failing silently.
+
+## Payment requests
+
+A request is just a commitment packed into a link. The payer's client deposits to that commitment, so the funds arrive shielded. To support requests:
+
+1. Generate `{ nullifier, secret }` for the payee and derive the commitment.
+2. Encode the commitment (plus token/amount hints) into a shareable link.
+3. On the payer's side, call `shield` / `shieldToken` targeting that commitment.
+4. The payee holds the Access Key and can later prove + unshield.
+
+This is the primitive that makes Velum a **payments** layer rather than a mixer — lean on it.
+
+## Relayer contract
+
+If you run your own relayer, it must:
+
+- Accept `{ pA, pB, pC, root, nullifierHash, amount, recipient, fee, token }`.
+- Swap `pB` G2 coordinates to on-chain order (`[c0, c1]`).
+- Screen the `recipient` against sanctions lists before submitting.
+- Submit `unshield` and collect its fee (bounded by the proof's `fee` input).
+
+The relayer holds no privileged role on the pool — it's just the `msg.sender` that fronts gas. Multiple independent relayers can serve the same pool.
+
+## Checklist for a safe integration
+
+<Steps>
+  <Step title="Secrets never leave the device">
+    No logging, no analytics, no server round-trips with `nullifier`/`secret`.
+  </Step>
+  <Step title="Relayer is the default withdrawal path">
+    Self-submit is opt-in and labeled as public.
+  </Step>
+  <Step title="Recipient is always fresh">
+    Never pre-fill the deposit/connected wallet as the withdrawal recipient.
+  </Step>
+  <Step title="Verify the pool address">
+    Resolve it from the official manifest, and confirm the verifier matches the
+    published circuit version.
+  </Step>
+</Steps>
